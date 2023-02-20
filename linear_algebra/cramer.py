@@ -1,6 +1,6 @@
 import numpy as np
 from typing import Iterator
-from .det import det
+from .util import det
 
 
 def cramer(mat: np.ndarray, aug: np.ndarray) -> Iterator[np.floating]:
