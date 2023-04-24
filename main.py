@@ -11,8 +11,8 @@ from linear_algebra.algebra.util import inv, rank
 
 class SolverType(str, Enum):
     lup = 'lup'
+    cramer = 'cramer'
     schur = 'schur'
-    block = 'block'
 
 
 def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
@@ -32,9 +32,9 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
 
     print(f'[green]INFO[/green]: solving...')
 
+    n, m = coef.shape
     match solver:
-        case 'lup' | 'schur':
-            n, m = coef.shape
+        case 'lup' | 'cramer':
             if n != m:
                 print(
                     f'[red]ERROR[/red]: solver type [blue]{solver}[/blue] cannot handle non-square matrices. Aborting')
@@ -56,7 +56,7 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
 
             print(f'[green]INFO[/green]: Solution vector: ')
             print(x)
-        case 'block':
+        case 'schur':
             ...
 
 
