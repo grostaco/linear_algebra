@@ -27,10 +27,10 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
     coef = mat[:, :-1]
     b = mat[:, -1:]
     print(
-        f'[green]INFO[/green]: loaded matrix from file [bold blue]{in_file}[/bold blue]\n')
-    print(f'[green]INFO[/green]: loaded coefficients matrix:')
+        f':bell: [green]INFO[/green]: loaded matrix from file [bold blue]{in_file}[/bold blue]\n')
+    print(f':bell: [green]INFO[/green]: loaded coefficients matrix:')
     print(f'{coef}')
-    print(f'[green]INFO[/green]: loaded constants matrix:')
+    print(f':bell: [green]INFO[/green]: loaded constants matrix:')
     print(f'{b}\n')
 
     coef_mask = ~coef.any(-1)
@@ -41,25 +41,25 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
     b = b[~mask]
 
     if mask.any():
-        print(f'[green]INFO[/green]: Truncating matrix')
-        print(f'[green]INFO[/green]: Truncated coefficients matrix:')
+        print(f':bell: [green]INFO[/green]: Truncating matrix')
+        print(f':bell: [green]INFO[/green]: Truncated coefficients matrix:')
         print(coef)
-        print(f'[green]INFO[/green]: Truncated constants matrix: ')
+        print(f':bell: [green]INFO[/green]: Truncated constants matrix: ')
         print(b)
 
-    print(f'[green]INFO[/green]: solving...')
+    print(f':bell: [green]INFO[/green]: solving...')
 
     n, m = coef.shape
     match solver:
         case 'lup' | 'cramer':
             if n != m:
                 print(
-                    f'[red]ERROR[/red]: solver type [blue]{solver}[/blue] cannot handle non-square matrices. Aborting')
+                    f':no_entry_sign: [red]ERROR[/red]: solver type [blue]{solver}[/blue] cannot handle non-square matrices. Aborting')
                 exit(1)
 
             if rank(mat) != n:
                 print(
-                    f'[red]ERROR[/red]: solver type {solver} cannot handle non-singular matrices. '
+                    f':no_entry_sign: [red]ERROR[/red]: solver type {solver} cannot handle non-singular matrices. '
                     f'The input coefficients matrix either has infinite solutions or is inconsistent. Aborting')
                 exit(1)
 
@@ -94,14 +94,14 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
             if rm != rn or not np.diag(ref).all():
                 # Check if it is inconsistent
                 if not (b[~idx] == 0).all():
-                    print(f'[red]ERROR[/red]: The system is inconsistent. Aborting')
+                    print(f':no_entry_sign: [red]ERROR[/red]: The system is inconsistent. Aborting')
                     exit(1)
                 else:
                     free_indices = []
                     for x in ref:
                         free_indices.append(np.nonzero(x != 0)[0][0])
                     print(
-                        f'[green]INFO[/green]: The system is has infinitely many solutions. The possible free variables are: \n'
+                        f':bell: [green]INFO[/green]: The system is has infinitely many solutions. The possible free variables are: \n'
                         f'{set(range(rn)) - set(free_indices)}')
                     exit(0)
             else:
