@@ -88,18 +88,15 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
 
             rm, rn = ref.shape
 
-            if rm != rn:  # and not np.diag(ref).all():
+            if rm != rn or not np.diag(ref).all():
                 # Check if it is inconsistent
                 if not (b[~idx] == 0).all():
                     print(f'[red]ERROR[/red]: The system is inconsistent. Aborting')
                     exit(1)
                 else:
-                    print(ref)
                     free_indices = []
                     for x in ref:
                         free_indices.append(np.nonzero(x != 0)[0][0])
-
-                    print(free_indices)
                     print(
                         f'[green]INFO[/green]: The system is has infinitely many solutions. The possible free variables are: \n'
                         f'{set(range(rn)) - set(free_indices)}')
