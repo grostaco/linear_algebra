@@ -1,7 +1,6 @@
 import numpy as np
 import numpy.typing as npt
 from .lup import lup_factorization
-import sys
 import random
 
 
