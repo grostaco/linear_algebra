@@ -23,7 +23,7 @@ def rank(mat: np.ndarray, tol=1e-6) -> int:
     return sum((abs(np.diag(u)) > tol))
 
 
-def inv(mat: npt.NDArray[np.floating], tol: float = 1e-6) -> npt.NDArray[np.floating]:
+def inv(mat: npt.NDArray[np.floating], tol: float = 1e-9) -> npt.NDArray[np.floating]:
     m, n = mat.shape
 
     if m != n:
@@ -79,6 +79,7 @@ def permute_equations(mat: np.ndarray, steps=10):
 
     return mat / np.linalg.norm(mat)
 
+
 def back_substitution(mat, b):
     n = len(b) - 1
     x = np.zeros_like(b)
@@ -86,7 +87,7 @@ def back_substitution(mat, b):
     for i in range(n - 1, -1, -1):
         s = b[i]
         for j in range(n, i, -1):
-            s = s - np.dot(mat[i,j], x[j])
+            s = s - np.dot(mat[i, j], x[j])
 
         x[i] = s / mat[i, i]
         print(x[i])
