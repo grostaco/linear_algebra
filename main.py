@@ -4,7 +4,6 @@ from rich import print
 
 import numpy as np
 from linear_algebra.algebra.cramer import cramer
-from linear_algebra.algebra.gaussian_elim import gaussian_elim
 from linear_algebra.algebra.lup import lup_factorization
 from linear_algebra.algebra.schur import schur
 
@@ -31,6 +30,19 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
     print(f'{coef}')
     print(f'[green]INFO[/green]: loaded constants matrix:')
     print(f'{b}\n')
+
+    coef_mask = ~coef.any(-1)
+    b_mask = ~b.any(-1)
+
+    mask = coef_mask & b_mask
+    coef = coef[~mask]
+    b = b[~mask]
+
+    print(f'[green]INFO[/green]: Truncating matrix')
+    print(f'[green]INFO[/green]: Truncated coefficients matrix:')
+    print(coef)
+    print(f'[green]INFO[/green]: Truncated constants matrix: ')
+    print(b)
 
     print(f'[green]INFO[/green]: solving...')
 
@@ -63,22 +75,26 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
 
             idx = ref.any(-1)
 
-            if idx.all() == False and not np.diag(ref).all():
+            ref_mask = ~ref.any(-1)
+            b_mask = ~b.any(-1)
+
+            mask = ref_mask & b_mask
+            ref = ref[~mask]
+            b = b[~mask]
+
+            rm, rn = ref.shape
+
+            if rm != rn:  # and not np.diag(ref).all():
                 # Check if it is inconsistent
                 if not (b[~idx] == 0).all():
                     print(f'[red]ERROR[/red]: The system is inconsistent. Aborting')
                     exit(1)
                 else:
-                    free_indices = np.nonzero(np.diag(ref) == 0)[0]
-                    # print(ref)
-                    print(free_indices)
-                    #print(np.nonzero(ref[-1, n:]))
-                    # free_indices = np.vstack((
-                    #    free_indices, n + np.nonzero(ref[-1, n:])[0]))
+                    free_indices = np.pad(np.diag(ref) != 0, (0, rn - rm))
 
                     print(
                         f'[green]INFO[/green]: The system is has infinitely many solutions. The possible free variables are: \n'
-                        f'{free_indices}')
+                        f'{np.arange(rn)[~free_indices]}')
                     exit(0)
             else:
                 x = back_substitution(ref[idx], b[idx])
