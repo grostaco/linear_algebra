@@ -63,21 +63,25 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
 
             idx = ref.any(-1)
 
-            if idx.all() == False:
+            if idx.all() == False and not np.diag(ref).all():
                 # Check if it is inconsistent
                 if not (b[~idx] == 0).all():
                     print(f'[red]ERROR[/red]: The system is inconsistent. Aborting')
                     exit(1)
                 else:
-                    pivot_indices = np.where(ref != 0)[1]
-                    free_variable_indices = [i for i in range(
-                        ref.shape[1]) if i not in pivot_indices]
+                    free_indices = np.nonzero(np.diag(ref) == 0)[0]
+                    # print(ref)
+                    print(free_indices)
+                    #print(np.nonzero(ref[-1, n:]))
+                    # free_indices = np.vstack((
+                    #    free_indices, n + np.nonzero(ref[-1, n:])[0]))
+
                     print(
                         f'[green]INFO[/green]: The system is has infinitely many solutions. The possible free variables are: \n'
-                        f'{free_variable_indices}')
+                        f'{free_indices}')
                     exit(0)
             else:
-                x = back_substitution(ref, b)
+                x = back_substitution(ref[idx], b[idx])
         case _:
             raise ValueError()
 
