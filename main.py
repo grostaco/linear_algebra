@@ -106,7 +106,7 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
             else:
                 x = back_substitution(ref[idx], b[idx])
         case _:
-            raise ValueError()
+            raise ValueError(f'Unkown solver {solver}')
 
     print(f'[green]INFO[/green]: Solution vector: ')
     print(x)
