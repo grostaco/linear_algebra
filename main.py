@@ -19,6 +19,7 @@ class SolverType(str, Enum):
 
 def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
          in_file: str = typer.Argument(..., help='Input numpy dump file to be solved')):
+    print(f':star: Linear Algebra Solver v1.0')
     print(f':wrench: solver selected: [bold blue]{solver}[/bold blue]')
     print(f':file_folder: input file: [bold blue]{in_file}[/bold blue]\n')
 
@@ -108,7 +109,7 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
         case _:
             raise ValueError(f'Unkown solver {solver}')
 
-    print(f'[green]INFO[/green]: Solution vector: ')
+    print(f':white_heavy_check_mark: Solution vector: ')
     print(x)
 
 
