@@ -16,7 +16,12 @@ def det(mat: npt.NDArray[np.floating]) -> None | np.floating:
     return sign * np.prod(np.diag(l)) * np.prod(np.diag(u))
 
 
-def inv(mat: npt.NDArray[np.floating], tol: float = 1e-6) -> npt.NDArray[np.floating]:
+# def rank(mat: npt.NDArray[np.floating]):
+#     l, u, _ = lup_factorization(mat)
+
+#     return min(np.diag(l).sum(), np.diag(u).sum())
+
+def inv(mat: npt.NDArray[np.floating], tol: float = sys.float_info.epsilon) -> npt.NDArray[np.floating]:
     m, n = mat.shape
 
     if m != n:
@@ -37,27 +42,17 @@ def inv(mat: npt.NDArray[np.floating], tol: float = 1e-6) -> npt.NDArray[np.floa
 
             mat[[h, i]] = mat[[i, h]]
 
-        if abs(mat[i, i]) < tol:
-            raise ValueError(f'Matrix is not invertible')
-
         factor = mat[i+1:n, i] / mat[i, i]
         mat[i+1:, :] -= mat[i, :] * factor[:, None]
 
     for i in range(m-1, 0, -1):
-        if abs(mat[i, i]) < tol:
-            raise ValueError(f'Matrix is not invertible')
         factor = mat[:i, i] / mat[i, i]
         mat[:i, :] -= mat[i, :] * factor[:, None]
 
     factor = np.diag(mat)[:, None]
-
-    if (abs(factor) < tol).any():
-        raise ValueError(f'Matrix is not invertible')
-
     mat /= factor
 
     return mat[:, n:]
-
 
 
 def is_full(mat: npt.NDArray[np.floating]):
