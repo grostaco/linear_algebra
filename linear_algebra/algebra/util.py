@@ -16,12 +16,15 @@ def det(mat: npt.NDArray[np.floating]) -> None | np.floating:
     return sign * np.prod(np.diag(l)) * np.prod(np.diag(u))
 
 
-# def rank(mat: npt.NDArray[np.floating]):
-#     l, u, _ = lup_factorization(mat)
+def rank(mat: np.ndarray, tol=1e-6) -> int:
+    try:
+        l, u, _ = lup_factorization(mat.copy())
+    except ValueError:
+        return 0
+    return sum((abs(np.diag(u)) > tol))
 
-#     return min(np.diag(l).sum(), np.diag(u).sum())
 
-def inv(mat: npt.NDArray[np.floating], tol: float = sys.float_info.epsilon) -> npt.NDArray[np.floating]:
+def inv(mat: npt.NDArray[np.floating], tol: float = 1e-6) -> npt.NDArray[np.floating]:
     m, n = mat.shape
 
     if m != n:
@@ -42,14 +45,23 @@ def inv(mat: npt.NDArray[np.floating], tol: float = sys.float_info.epsilon) -> n
 
             mat[[h, i]] = mat[[i, h]]
 
+        if abs(mat[i, i]) < tol:
+            raise ValueError(f'Matrix is not invertible')
+
         factor = mat[i+1:n, i] / mat[i, i]
         mat[i+1:, :] -= mat[i, :] * factor[:, None]
 
     for i in range(m-1, 0, -1):
+        if abs(mat[i, i]) < tol:
+            raise ValueError(f'Matrix is not invertible')
         factor = mat[:i, i] / mat[i, i]
         mat[:i, :] -= mat[i, :] * factor[:, None]
 
     factor = np.diag(mat)[:, None]
+
+    if (abs(factor) < tol).any():
+        raise ValueError(f'Matrix is not invertible')
+
     mat /= factor
 
     return mat[:, n:]
@@ -67,8 +79,3 @@ def permute_equations(mat: np.ndarray, steps=10):
             mat[random.randint(0, n - 1)]
 
     return mat / np.linalg.norm(mat)
-
-
-def rank(mat: np.ndarray) -> int:
-    _, u, _ = lup_factorization(mat)
-    return np.count_nonzero(u)
