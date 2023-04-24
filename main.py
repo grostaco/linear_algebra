@@ -4,6 +4,7 @@ from rich import print
 
 import numpy as np
 from linear_algebra.algebra.cramer import cramer
+from linear_algebra.algebra.gaussian_elim import gaussian_elim
 from linear_algebra.algebra.lup import lup_factorization
 from linear_algebra.algebra.schur import schur
 
@@ -69,7 +70,10 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
                 x = np.array(list(x)).reshape(-1, 1)
 
         case 'schur':
-            m = schur(np.hstack((coef, b)))
+            try:
+                m = schur(np.hstack((coef, b)))
+            except ValueError:
+                m = gaussian_elim(np.hstack((coef, b)))
 
             ref, b = m[:, :-1], m[:, -1:]
 
@@ -90,10 +94,12 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
                     print(f'[red]ERROR[/red]: The system is inconsistent. Aborting')
                     exit(1)
                 else:
+                    print(ref)
                     free_indices = []
                     for x in ref:
                         free_indices.append(np.nonzero(x != 0)[0][0])
 
+                    print(free_indices)
                     print(
                         f'[green]INFO[/green]: The system is has infinitely many solutions. The possible free variables are: \n'
                         f'{set(range(rn)) - set(free_indices)}')
