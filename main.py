@@ -86,6 +86,7 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
             mask = ref_mask & b_mask
             ref = ref[~mask]
             b = b[~mask]
+            idx = idx[~mask]
 
             rm, rn = ref.shape
 
