@@ -41,10 +41,16 @@ def inv(mat: npt.NDArray[np.floating], tol: float = sys.float_info.epsilon) -> n
 
             mat[[h, i]] = mat[[i, h]]
 
+        if mat[i, i] < tol:
+            raise ValueError(
+                f"Matrix is degenerate. Maybe the entries are dependent?")
         factor = mat[i+1:n, i] / mat[i, i]
         mat[i+1:, :] -= mat[i, :] * factor[:, None]
 
     for i in range(m-1, 0, -1):
+        if mat[i, i] < tol:
+            raise ValueError(
+                f"Matrix is degenerate. Maybe the entries are dependent?")
         factor = mat[:i, i] / mat[i, i]
         mat[:i, :] -= mat[i, :] * factor[:, None]
 
