@@ -4,9 +4,11 @@ from rich import print
 
 import numpy as np
 from linear_algebra.algebra.cramer import cramer
+from linear_algebra.algebra.gaussian_elim import gaussian_elim
 from linear_algebra.algebra.lup import lup_factorization
+from linear_algebra.algebra.schur import schur
 
-from linear_algebra.algebra.util import inv, rank
+from linear_algebra.algebra.util import back_substitution, inv, rank
 
 
 class SolverType(str, Enum):
@@ -54,10 +56,33 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
                 x = cramer(coef, b.reshape(-1))
                 x = np.array(list(x)).reshape(-1, 1)
 
-            print(f'[green]INFO[/green]: Solution vector: ')
-            print(x)
         case 'schur':
-            ...
+            m = schur(np.hstack((coef, b)))
+
+            ref, b = m[:, :-1], m[:, -1:]
+
+            idx = ref.any(-1)
+
+            if idx.all() == False:
+                # Check if it is inconsistent
+                if not (b[~idx] == 0).all():
+                    print(f'[red]ERROR[/red]: The system is inconsistent. Aborting')
+                    exit(1)
+                else:
+                    pivot_indices = np.where(ref != 0)[1]
+                    free_variable_indices = [i for i in range(
+                        ref.shape[1]) if i not in pivot_indices]
+                    print(
+                        f'[green]INFO[/green]: The system is has infinitely many solutions. The possible free variables are: \n'
+                        f'{free_variable_indices}')
+                    exit(0)
+            else:
+                x = back_substitution(ref, b)
+        case _:
+            raise ValueError()
+
+    print(f'[green]INFO[/green]: Solution vector: ')
+    print(x)
 
 
 if __name__ == '__main__':
