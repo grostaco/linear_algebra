@@ -78,3 +78,17 @@ def permute_equations(mat: np.ndarray, steps=10):
             mat[random.randint(0, n - 1)]
 
     return mat / np.linalg.norm(mat)
+
+def back_substitution(mat, b):
+    n = len(b) - 1
+    x = np.zeros_like(b)
+    x[n] = b[n] / mat[n, n]
+    for i in range(n - 1, -1, -1):
+        s = b[i]
+        for j in range(n, i, -1):
+            s = s - np.dot(mat[i,j], x[j])
+
+        x[i] = s / mat[i, i]
+        print(x[i])
+
+    return x
