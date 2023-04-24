@@ -1,1 +1,1 @@
-from linear_algebra.cramer import cramer
+from linear_algebra.algebra.cramer import cramer

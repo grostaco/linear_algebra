@@ -1,3 +1,4 @@
 .vscode
-*.ipynb
+notebooks/
 __pycache__
+*.ipynb
