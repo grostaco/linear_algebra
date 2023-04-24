@@ -39,11 +39,12 @@ def main(solver: SolverType = typer.Option(..., help='Solver type to be used'),
     coef = coef[~mask]
     b = b[~mask]
 
-    print(f'[green]INFO[/green]: Truncating matrix')
-    print(f'[green]INFO[/green]: Truncated coefficients matrix:')
-    print(coef)
-    print(f'[green]INFO[/green]: Truncated constants matrix: ')
-    print(b)
+    if mask.any():
+        print(f'[green]INFO[/green]: Truncating matrix')
+        print(f'[green]INFO[/green]: Truncated coefficients matrix:')
+        print(coef)
+        print(f'[green]INFO[/green]: Truncated constants matrix: ')
+        print(b)
 
     print(f'[green]INFO[/green]: solving...')
 
